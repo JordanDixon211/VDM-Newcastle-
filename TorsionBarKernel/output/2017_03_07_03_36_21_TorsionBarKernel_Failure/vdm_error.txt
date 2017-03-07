@@ -1,0 +1,19 @@
+
+===============================================================================================
+Error time: 2017-03-07 03:36:23
+org.destecs.protocol.exceptions.RemoteSimulationException: Status = NOT_INITIALIZED. Internal error: Error 4034: Name 'TorsionBar`kern' not in scope in 'TorsionBar' (C:\Users\Jordan\Documents\Overture\workspacePhysical\TorsionBarKernel\model_de\TorsionBar.vdmrt) at line 13:73
+	at org.destecs.vdm.SimulationManager.start(SimulationManager.java:616)
+	at org.destecs.vdm.CoSimImpl.start(CoSimImpl.java:562)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.xmlrpc.server.ReflectiveXmlRpcHandler.invoke(ReflectiveXmlRpcHandler.java:115)
+	at org.apache.xmlrpc.server.ReflectiveXmlRpcHandler.execute(ReflectiveXmlRpcHandler.java:106)
+	at org.destecs.vdm.XmlRpcServerWorkerDestecs.execute(XmlRpcServerWorkerDestecs.java:46)
+	at org.apache.xmlrpc.server.XmlRpcServer.execute(XmlRpcServer.java:86)
+	at org.apache.xmlrpc.server.XmlRpcStreamServer.execute(XmlRpcStreamServer.java:200)
+	at org.apache.xmlrpc.webserver.Connection.run(Connection.java:208)
+	at org.apache.xmlrpc.util.ThreadPool$Poolable$1.run(ThreadPool.java:68)
+
+

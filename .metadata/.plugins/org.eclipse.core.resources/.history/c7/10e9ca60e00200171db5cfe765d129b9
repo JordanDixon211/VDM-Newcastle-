@@ -1,0 +1,19 @@
+class Kernel is subclass of Motor
+
+instance variables
+VeriInput : Motor; 
+
+operations 
+
+public Kernel: Motor ==> Kernel
+Voter(m1) ==
+(
+  -- set instance variables
+  enc1 := e1;
+  enc2 := e2;
+  enc3 := e3
+);
+
+
+
+end Kernel;

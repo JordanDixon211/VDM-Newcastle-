@@ -1,0 +1,8 @@
+class Kernel is subclass of Motor
+
+instance variables
+VeriInput : Motor; 
+
+
+
+end Kernel;

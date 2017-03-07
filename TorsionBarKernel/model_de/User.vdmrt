@@ -1,0 +1,35 @@
+class User
+
+instance variables 
+
+-- controller
+controller: Controller;
+
+-- if true, controller.Visit will be called
+trigger: bool := World`USE_SCRIPT = 0
+
+operations
+
+-- contructor for User
+public User: Controller ==> User
+User(ctrl) ==
+	controller := ctrl;
+
+-- periodic operation
+public Step: () ==> ()
+Step() ==
+	if trigger then (
+		-- set angles to visit and reset trigger
+		controller.Visit(ANGLES);
+		trigger := false
+	)
+
+-- define periodic thread
+thread periodic(1e8, 0, 0, 1e8)(Step)
+
+values
+
+pi = MATH`pi;
+ANGLES = {pi/12,pi/4,5*pi/12,pi/2} 
+
+end User

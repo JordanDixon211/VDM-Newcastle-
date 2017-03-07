@@ -1,0 +1,20 @@
+
+===============================================================================================
+Error time: 2017-03-07 03:43:59
+org.destecs.protocol.exceptions.RemoteSimulationException: VDM Main Thread no longer active. Forced to stop before end time.
+	at org.destecs.vdm.SimulationManager.checkMainContext(SimulationManager.java:249)
+	at org.destecs.vdm.SimulationManager.step(SimulationManager.java:184)
+	at org.destecs.vdm.CoSimImpl.step(CoSimImpl.java:367)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.apache.xmlrpc.server.ReflectiveXmlRpcHandler.invoke(ReflectiveXmlRpcHandler.java:115)
+	at org.apache.xmlrpc.server.ReflectiveXmlRpcHandler.execute(ReflectiveXmlRpcHandler.java:106)
+	at org.destecs.vdm.XmlRpcServerWorkerDestecs.execute(XmlRpcServerWorkerDestecs.java:46)
+	at org.apache.xmlrpc.server.XmlRpcServer.execute(XmlRpcServer.java:86)
+	at org.apache.xmlrpc.server.XmlRpcStreamServer.execute(XmlRpcStreamServer.java:200)
+	at org.apache.xmlrpc.webserver.Connection.run(Connection.java:208)
+	at org.apache.xmlrpc.util.ThreadPool$Poolable$1.run(ThreadPool.java:68)
+
+

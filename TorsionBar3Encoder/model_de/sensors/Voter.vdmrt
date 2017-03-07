@@ -1,0 +1,46 @@
+class Voter is subclass of Encoder
+
+-- A voter class that subclasses Encoder class
+-- This class produces a single value from three Encoder objects
+
+instance variables
+
+enc1: Encoder; 
+enc2: Encoder;
+enc3: Encoder;
+
+operations
+
+-- constructor for Voter
+public Voter: Encoder * Encoder * Encoder ==> Voter
+Voter(e1, e2, e3) ==
+(
+  -- set instance variables
+  enc1 := e1;
+  enc2 := e2;
+  enc3 := e3
+);
+
+-- get voted value
+public Read: () ==> int
+Read() ==
+  let reading1 = enc1.Read(),
+      reading2 = enc2.Read(),
+      reading3 = enc3.Read() 
+  in (
+    -- TODO: implement voting between reading1, reading 2, reading3
+  	return reading1
+  )
+
+functions
+
+-- return true two values are close (within 1 degree), false otherwise
+private close: int * int -> bool
+close(a,b) ==
+  abs(a-b) <= EPSILON
+
+values
+
+EPSILON = floor World`ENC_COUNTS/360;
+
+end Voter

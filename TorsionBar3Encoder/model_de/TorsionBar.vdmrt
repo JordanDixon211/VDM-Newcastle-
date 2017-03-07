@@ -1,0 +1,36 @@
+system TorsionBar
+
+instance variables
+
+-- sensors (two encoders)
+public static encMotor1: Encoder := new Encoder();
+public static encMotor2: Encoder := new Encoder();
+public static encMotor3: Encoder := new Encoder();
+public static encLoad: Encoder := new Encoder();
+
+-- voter for encoders
+public static voter: Voter := new Voter(encMotor1, encMotor2, encMotor3);
+
+-- actuators (one motor)
+public static pwmMotor: Motor := new Motor();
+
+-- controller object ~ 50Hz
+public static ctrl: Controller := new Controller(50, voter, encLoad, pwmMotor);
+
+-- user object ~ 10Hz
+public static user: User := new User(ctrl);
+
+-- architecture definition
+cpu1 : CPU := new CPU(<FP>, 200E6);
+cpu2 : CPU := new CPU(<FP>, 200E6);
+bus1: BUS := new BUS(<FCFS>, 115E2, {cpu1, cpu2});
+	
+operations
+
+public TorsionBar: () ==> TorsionBar
+TorsionBar() == (
+	-- deploy controller
+	cpu1.deploy(ctrl, "TorsionBarController");
+)
+
+end TorsionBar
