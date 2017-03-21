@@ -1,0 +1,73 @@
+class IOFactory
+
+types
+
+public Side = <LEFT> | <RIGHT>
+
+instance variables
+
+-- encoders (as concrete classes)
+private encLeft: Encoder := new Encoder();
+private encRight: Encoder := new Encoder(true);
+
+-- line-following sensors (as concrete classes)
+private irdemux: IRDemux := new IRDemux(5);
+private irsensors: seq of IRSensor := 
+	[new IRSensor(irdemux,i) | i in set {1,...,World`NUM_IR_SENSORS}];
+
+-- servos (as concrete classes)
+private servoLeft: SpeedServo := new SpeedServo();
+private servoRight: SpeedServo := new SpeedServo(true);
+
+-- read energy from 20-sim
+public static energySensor: EnergySensor := new EnergySensor();
+
+-- counter for laps of the track
+public static loopCounter: LoopCounter := new LoopCounter();
+
+operations
+
+-- synchronize local copies of shared variables
+public Sync: () ==> ()
+Sync() == (
+	cycles(20) (
+		-- sync actuators
+		servoLeft.Sync();
+		servoRight.Sync();
+		-- sync sensors
+		encLeft.Sync();
+		encRight.Sync();
+		irdemux.Sync();
+		-- sync energy and lap counter
+		energySensor.Sync();
+		loopCounter.CheckPosition()
+    );
+);
+
+-- access encoders
+public EncoderFactory: Side ==> ISensorReal
+EncoderFactory(side) ==
+	if side = <LEFT> 
+	then return encLeft
+	else return encRight;
+
+-- access line-following sensors
+public IRSensorFactory: nat1 ==> IRSensor
+IRSensorFactory(n) == (
+	return irsensors(n)
+)
+pre n <= World`NUM_IR_SENSORS;
+
+-- access line-following sensors
+public ServoFactory: Side ==> IActuatorRealPercent
+ServoFactory(side) ==
+	if side = <LEFT> 
+	then return servoLeft
+	else return servoRight;
+
+-- access energy sensor
+public EnergySensorFactory: () ==> EnergySensor
+EnergySensorFactory() == 
+	return energySensor;
+
+end IOFactory

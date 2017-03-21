@@ -1,0 +1,29 @@
+-- shared design parameters
+sdp lf_positions = World.lf_positions;
+sdp num_sensors = World.NUM_IR_SENSORS;
+sdp sensor1FailTime = World.sensor1FailTime;
+sdp sensor2FailTime = World.sensor2FailTime;
+
+-- servos
+output servo_left = R2G2P.io.servoLeft.val;
+output servo_right = R2G2P.io.servoRight.val;
+
+-- encoders
+input encoder_left = R2G2P.io.encLeft.val;
+input encoder_right = R2G2P.io.encRight.val;
+
+-- line-following sensors
+input lf = R2G2P.io.irdemux.lf;
+
+-- line-following sensor fail flags
+input lf_fail = R2G2P.io.irdemux.lf_failed;
+
+-- energy used
+input energy_used = R2G2P.io.energySensor.val;
+
+-- for coursework monitoring
+input pos_x = R2G2P.io.loopCounter.pos_x;
+input pos_y = R2G2P.io.loopCounter.pos_y;
+
+-- centre reading
+input centre_value = R2G2P.io.loopCounter.centre_value;

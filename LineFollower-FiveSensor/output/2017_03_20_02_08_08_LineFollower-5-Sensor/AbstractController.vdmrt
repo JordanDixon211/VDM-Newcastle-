@@ -1,0 +1,149 @@
+class AbstractController
+
+types
+
+-- sensor identifier
+public SensorId = seq of char | nat
+
+instance variables
+
+-- encoders (as abstract classes)
+private encLeft: ISensorReal;
+private encRight: ISensorReal;
+
+-- servos (as abstract classes)
+private servoLeft:  IActuatorRealPercent;
+private servoRight: IActuatorRealPercent;
+
+-- line-following sensors
+private lf: seq of ISensorInt8 := [];
+private bw: seq of BlackWhiteSensor := [];
+
+-- true if initialised, false otherwise
+private init: bool := true;
+
+operations
+
+-- constructor for AbstractController
+public AbstractController: () ==> AbstractController
+AbstractController() ==
+(
+	-- grab sensors and actuators
+	encLeft := R2G2P`io.EncoderFactory(<LEFT>);
+	encRight := R2G2P`io.EncoderFactory(<RIGHT>);
+	servoLeft := R2G2P`io.ServoFactory(<LEFT>);
+	servoRight := R2G2P`io.ServoFactory(<RIGHT>);
+
+	-- grab line-following sensors and make black/white sensors
+	for i = 1 to World`NUM_IR_SENSORS do (
+		lf := lf ^ [R2G2P`io.IRSensorFactory(i)];
+		bw := bw ^ [new BlackWhiteSensor(lf(i))]
+	);
+);
+
+-- main control loop
+public Step: () ==> ()
+Step() == (
+	if init then (
+		Init();
+		init := false
+	);
+	Loop()
+);
+
+-- control logic
+public Loop: () ==> ()
+Loop() == (
+	skip
+);
+
+-- initialise controller
+public Init: () ==> ()
+Init() == (
+	skip
+);
+
+-- access left encoder
+public GetLeftEncoder: () ==> ISensorReal
+GetLeftEncoder() == return encLeft;
+
+-- access right encoder
+public GetRightEncoder: () ==> ISensorReal
+GetRightEncoder() == return encRight;
+
+-- access line-following sensor
+public GetLF: nat1 ==> ISensorInt8
+GetLF(i) == return lf(i)
+pre i <= World`NUM_IR_SENSORS;
+
+-- access all line-following sensors
+public GetAllLF: () ==> seq of ISensorInt8
+GetAllLF() == return lf;
+
+-- print out sensor values
+public PrintLFSensorValues: () ==> ()
+PrintLFSensorValues() == (
+	for i = 1 to World`NUM_IR_SENSORS do
+		IO`printf("(%s,%s) ", [i, lf(i).Read()]);
+	IO`println(" ")
+);
+
+-- access black-white sensor
+public GetBW: nat1 ==> BlackWhiteSensor
+GetBW(i) == return bw(i)
+pre i <= World`NUM_IR_SENSORS;
+
+-- access all black-white sensors
+public GetAllBW: () ==> seq of BlackWhiteSensor
+GetAllBW() == return bw;
+
+-- print out sensor values
+public PrintBWSensorValues: () ==> ()
+PrintBWSensorValues() == (
+	for i = 1 to World`NUM_IR_SENSORS do
+		let colour = if bw(i).IsBlack() then "BLACK" else "WHITE" in
+			IO`printf("(%s,%s) ", [i, colour]);
+	IO`println(" ")
+);
+
+-- access left servo
+public GetLeftServo: () ==> IActuatorRealPercent
+GetLeftServo() == return servoLeft;
+
+-- access right servo
+public GetRightServo: () ==> IActuatorRealPercent
+GetRightServo() == return servoRight;
+
+-- drive forward
+public Forward: real ==> ()
+Forward(s) == (
+    GetLeftServo().Write(s);
+	GetRightServo().Write(s)	
+)
+pre -1 <= s and s <= 1;
+
+-- drive backwards
+public Reverse: real ==> ()
+Reverse(s) == (
+    GetLeftServo().Write(-s);
+	GetRightServo().Write(-s)	
+)
+pre -1 <= s and s <= 1;
+
+-- turn the robot
+public Turn: real * real ==> ()
+Turn(l,r) == (
+	GetLeftServo().Write(l);
+	GetRightServo().Write(r)
+)
+pre -1 <= l and l <= 1 and
+    -1 <= r and r <= 1;
+
+-- stop the robot
+public Stop: () ==> ()
+Stop() == (
+    GetLeftServo().Write(0);
+	GetRightServo().Write(0)
+);
+
+end AbstractController

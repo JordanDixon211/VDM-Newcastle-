@@ -1,5 +1,5 @@
 #
-#Tue Mar 07 04:08:52 GMT 2017
+#Mon Mar 20 02:28:11 GMT 2017
 CycloidGenerator.CycloidGenerator=_operation,sync
 IO.fecho=_operation,sync
 TorsionBar=_system,systemclass
@@ -9,8 +9,8 @@ Controller.encLoad=Encoder,class
 Controller.encMotor=Encoder,class
 Motor.Write=_operation,sync
 TorsionBar.cpu1=CPU,class
-Kernel.Kernel=_operation,sync
 Controller.period=nat,variable
+Kernel.Kernel=_operation,sync
 PID.prev_err=real,variable
 User.Step=_operation,sync
 Controller.next_time=real,variable

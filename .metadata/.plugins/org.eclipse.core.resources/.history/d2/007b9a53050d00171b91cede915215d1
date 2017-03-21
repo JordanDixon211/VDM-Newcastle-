@@ -1,0 +1,66 @@
+/*
+This class should follow a line using three sensors. 
+
+You may add types, values, functions and operations as necessary in 
+your solution.
+
+Sensors are accessed through sensor objects (sensor1, sensor2, 
+sensor3) of the type BlackWhiteSensor, with the following operations:
+
+IsBlack: () ==> bool -- true if sensor1 sees black, false otherwise 
+IsWhite: () ==> bool -- true if sensor sees white, false otherwise
+Scale: () ==>        -- raw sensor reading: 0.0 = black, 1.0 = white
+
+Robot movement is accessed through various operations (from the 
+AbstractController super class):
+
+Forward(x); -- move forward, range (0, 1.0)
+Reverse(x); -- move backward, range (0, 1.0)
+Turn(x,y);  -- set left and right wheel speed, range (-1,1)
+Stop();     -- stop the robot
+
+*/
+class Controller3S is subclass of AbstractController
+
+instance variables
+
+private sensor1: BlackWhiteSensor := new BlackWhiteSensor(); -- "red" sensor
+private sensor2: BlackWhiteSensor := new BlackWhiteSensor(); -- "blue" sensor
+private sensor3: BlackWhiteSensor := new BlackWhiteSensor(); -- "green" sensor
+
+operations
+
+-- initialise mode with context
+public Init: () ==> ()
+Init() == (
+    -- set instance variables
+	sensor1 := GetBW(1);
+	sensor2 := GetBW(2);
+	sensor3 := GetBW(3);		
+);
+
+private Sensor1Fail: () ==> ()
+Sensor1Fail() == (
+	if(GetLF(1).HasFailed()) then(
+		if(sensor2.IsBlack) then 
+		Turn(-1,1);
+	)
+);
+
+-- control loop
+public Loop: () ==> ()
+Loop() == (
+
+	--Checks the status of the sensors, if they're white and black and acts accordingly
+	if(sensor1.IsWhite() and sensor2.IsBlack() and sensor3.IsWhite()) then 
+	Forward(1);
+	
+	if(sensor1.IsBlack() and sensor2.IsWhite() and sensor3.IsWhite()) then
+	Turn(0,1);
+		
+	if(sensor1.IsWhite() and sensor2.IsWhite() and sensor3.IsBlack()) then
+	Turn(1,0);
+);
+
+
+end Controller3S

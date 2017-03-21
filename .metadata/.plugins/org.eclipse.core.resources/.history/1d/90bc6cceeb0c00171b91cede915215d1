@@ -1,0 +1,28 @@
+class World
+
+operations
+
+-- run a simulation
+public run: () ==> ()
+run() == (
+	
+	start(R2G2P`mainthread);
+	block();
+);
+
+-- wait for simulation to finish
+block: () ==> ()
+block() == skip
+sync per block => false;
+
+values
+
+public lf_positions: seq of seq of real = [[0.0,0.0],[0.0,0.0],[0.0,0.0],[0.0, 0.0],[0.0, 0.0]];
+public NUM_IR_SENSORS = 5;
+public SIMULATION_TIME = 60;
+public BATTERY_INITIAL_ENERGY = 2500;
+public PROPORTIONAL = true;
+public sensor1FailTime = 0.0;
+public sensor2FailTime = 0.0;
+
+end World

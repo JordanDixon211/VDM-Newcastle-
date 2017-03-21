@@ -1,0 +1,117 @@
+class LoopCounter
+
+types
+
+Box = <INIT> | <START_LINE> | <BACK_STRAIGHT>
+
+values
+
+X_SPLIT = 0.0;
+Y_UPPER = -0.06;
+Y_LOWER = -0.08;
+
+instance variables
+
+-- monitored variables
+private pos_x: real := 0;
+private pos_y: real  := 0;
+
+-- last box entered by robot
+private box: Box := <INIT>;
+
+-- number of completed laps and energy used
+private numLaps: nat := 0;
+
+-- energy and time used
+private totalEnergy: real := 0;
+private totalTime: real := 0;
+
+-- true if battery died and message written, false otherwise
+private batteryDead: bool := false;
+
+-- centre reading
+private centre_value: real := 0;
+private black_time: real := 0;
+private total_black_time: real := 0;
+private started: bool := false
+
+operations
+
+public CheckPosition: () ==> ()
+CheckPosition() == (
+	if started and centre_value = 0 then (
+		black_time := black_time + 0.04
+	);
+	-- check for laps
+	if pos_y >= Y_LOWER and pos_y <= Y_UPPER then (
+		if pos_x > X_SPLIT then (
+		    if box = <INIT> then (
+		    	-- crossed start/finish for the first time
+		    	started := true;
+		    	IO`printf("Crossed start line at %s seconds.\n", [round(time/1e9,2)])
+		    )
+		    elseif box = <BACK_STRAIGHT> then (
+		        -- crossed start/finish to complete a lap
+		    	numLaps := numLaps + 1;
+		    	PrintSplitTime();
+		    	total_black_time := total_black_time + black_time;
+		    	black_time := 0
+		    );
+		    box := <START_LINE>
+		)
+		else (
+			if box = <START_LINE> then (
+			    -- crossed back line
+				-- IO`println("Crossed back straight.");
+				box := <BACK_STRAIGHT>
+			)
+		)	
+	);
+	
+	-- check for battery running out
+	if time > 1e9 and R2G2P`io.EnergySensorFactory().Read() >= World`BATTERY_INITIAL_ENERGY and not batteryDead then (
+		IO`printf("Battery depleted at %s seconds.\n", [round(time/1e9,2)]);
+		batteryDead := true
+	);
+);
+
+private PrintSplitTime: () ==> ()
+PrintSplitTime() == (
+    -- record current energy and time
+	dcl energyNow: real := R2G2P`io.EnergySensorFactory().Read();
+	dcl timeNow: nat := time;
+	-- calculate and print split times
+	dcl splitEnergy: real := energyNow - totalEnergy;
+	dcl splitTime: nat := timeNow - totalTime;
+	IO`printf("Completed lap %s in %s seconds using %s J of energy (%s%% time over black).\n", [numLaps, round(splitTime/1e9,1), round(splitEnergy,0), round(100*black_time/(splitTime/1e9),2)]);
+	-- update totals for next time
+	totalEnergy := energyNow;
+	totalTime := timeNow
+);
+
+-- print out totals for laps and energy
+public PrintTotals: () ==> ()
+PrintTotals() == (
+	-- print totals
+	IO`println(" ");
+	IO`println("==================================");
+	IO`printf("Number of sensors:    %s\n", [World`NUM_IR_SENSORS]);
+	IO`printf("Total laps completed: %s\n", [numLaps]);
+	IO`printf("Total time taken:     %s seconds\n", [round(totalTime/1e9,1)]);
+	IO`printf("Total energy used:    %s J (%s", [round(totalEnergy,0),round(100.0*totalEnergy/World`BATTERY_INITIAL_ENERGY,0)]);
+	IO`println("%)");
+	IO`printf("Mean lap time:        %s seconds\n", [if numLaps > 0 then round(totalTime/1e9/numLaps,1) else 0]);
+	IO`printf("Mean lap energy:      %s J\n", [if numLaps > 0 then round(totalEnergy/numLaps,0) else 0]);
+	IO`printf("Mean time over black: %s %%\n", [if numLaps > 0 then round(100*total_black_time/(totalTime/1e9),2) else 0]);	
+	IO`println(" ");	
+)
+
+functions
+
+-- round number to the given d.p.
+private round: real * nat -> real
+round(x, dp) == 
+    let mult = 10**dp in 
+    	floor (x * mult + 0.5) / mult
+
+end LoopCounter

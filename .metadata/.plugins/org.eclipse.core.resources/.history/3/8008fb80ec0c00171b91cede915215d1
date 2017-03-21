@@ -1,0 +1,69 @@
+/*
+This class should follow a line using three sensors. 
+
+You may add types, values, functions and operations as necessary in 
+your solution.
+
+Sensors are accessed through sensor objects (sensor1, sensor2) 
+of the type BlackWhiteSensor, with the following operations:
+
+IsBlack: () ==> bool -- true if sensor1 sees black, false otherwise 
+IsWhite: () ==> bool -- true if sensor sees white, false otherwise
+Scale: () ==> real   -- raw sensor reading: 0.0 = black, 1.0 = white
+GetSensor().HasFailed() ==> bool -- true if the sensor has failed
+
+Robot movement is accessed through various operations (from the 
+AbstractController super class):
+
+Forward(x); -- move forward, range (0, 1.0)
+Reverse(x); -- move backward, range (0, 1.0)
+Turn(x,y);  -- set left and right wheel speed, range (-1,1)
+Stop();     -- stop the robot
+
+*/
+class Controller2S is subclass of AbstractController
+
+instance variables
+
+private sensor1: BlackWhiteSensor := new BlackWhiteSensor(); -- "red" sensor
+private sensor2: BlackWhiteSensor := new BlackWhiteSensor(); -- "blue" sensor
+countiswhite : int := 0;
+
+operations
+
+-- initialise mode with context
+public Init: () ==> ()
+Init() == (
+    -- set instance variables
+	sensor1 := GetBW(1);
+	sensor2 := GetBW(2);
+
+	
+	
+);
+
+-- control loop
+public Loop: () ==> ()
+Loop() == (
+
+ 	 if(GetLF(1).HasFailed())(then --Checks if the sensor has failed 
+		if(sensor2.IsBlack()) then
+			Turn(1,-1) --turn aggressivly to ensure the Robot does not continue to spin 
+			else 
+			Turn(0,0.8) -- turn fast )
+
+	  else(  
+	    	
+	if(sensor1.IsBlack() and sensor2.IsWhite() and GetLF(1).HasFailed() = false) then  --check if it has failed if not do not execute
+	Turn(0,0.8);
+	
+	if(sensor1.IsWhite() and sensor2.IsBlack() and GetLF(1).HasFailed() = false)then 
+	Turn(0.8,0); 
+	
+	
+	if(sensor1.IsBlack() and sensor2.IsBlack() and GetLF(1).HasFailed() = false) then 
+	Forward(1); -- if both are black then Move forward.	
+	) 
+);
+
+end Controller2S

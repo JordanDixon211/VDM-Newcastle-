@@ -1,0 +1,62 @@
+/*
+This class should follow a line using three sensors. 
+
+You may add types, values, functions and operations as necessary in 
+your solution.
+
+Sensors are accessed through sensor objects (sensor1, sensor2, 
+sensor3, sensor4, sensor5) of the type BlackWhiteSensor, with the 
+following operations:
+
+IsBlack: () ==> bool -- true if sensor1 sees black, false otherwise 
+IsWhite: () ==> bool -- true if sensor sees white, false otherwise
+Scale: () ==>        -- raw sensor reading: 0.0 = black, 1.0 = white
+
+Robot movement is accessed through the "robot" instance variable (its
+type is AbstractModalController):
+
+Forward(x); -- move forward, range (0, 1.0)
+Reverse(x); -- move backward, range (0, 1.0)
+Turn(x,y);  -- set left and right wheel speed, range (-1,1)
+Stop();     -- stop the robot
+
+*/
+class Controller5S is subclass of AbstractController
+
+instance variables
+
+private sensor1: BlackWhiteSensor := new BlackWhiteSensor(); -- "red" sensor
+private sensor2: BlackWhiteSensor := new BlackWhiteSensor(); -- "blue" sensor
+private sensor3: BlackWhiteSensor := new BlackWhiteSensor(); -- "green" sensor
+private sensor4: BlackWhiteSensor := new BlackWhiteSensor(); -- "magenta" sensor
+private sensor5: BlackWhiteSensor := new BlackWhiteSensor(); -- "turquoise" sensor
+
+operations
+
+-- initialise mode with context
+public Init: () ==> ()
+Init() == (
+    -- set instance variables
+	sensor1 := GetBW(1);
+	sensor2 := GetBW(2);
+	sensor3 := GetBW(3);
+	sensor4 := GetBW(4);
+	sensor5 := GetBW(5);		
+);
+
+-- control loop
+public Loop: () ==> ()
+Loop() == (
+   if(sensor1.IsWhite() and sensor2.IsWhite() and sensor3.IsBlack() and sensor4.IsWhite() and sensor5.IsWhite()) then 
+	Forward(1);
+	
+	if(sensor1.IsBlack() and sensor2.IsWhite() and sensor3.IsWhite() or sensor1.IsWhite() and sensor2.IsBlack() and sensor3.IsBlack() ) then
+	Turn(0,1);
+	
+		if(sensor4.IsBlack() and sensor5.IsWhite() and sensor3.IsWhite() or sensor1.IsWhite() and sensor5.IsBlack() and sensor3.IsBlack() ) then
+	Turn(0,1);
+		
+		
+);
+
+end Controller5S

@@ -1,0 +1,32 @@
+system R2G2P
+
+instance variables 
+
+-- sensors and actuators, controller
+public static io: [IOFactory] := new IOFactory();
+private static controller: [AbstractController] := nil;
+
+-- thread to call io, controller
+public static mainthread: [Thread] := nil;
+
+-- cpu
+cpu: CPU := new CPU(<FP>, 1E6)
+
+operations
+
+-- constructor for System
+public R2G2P: () ==> R2G2P
+R2G2P() == (
+	-- instantiate controller based on number of IO sensors
+	controller := new Controller5S();
+	
+	-- create main thread with controller and IO
+    mainthread := new Thread(25, io, controller);
+    
+	-- deployment
+	cpu.deploy(io);
+	cpu.deploy(controller);
+	cpu.deploy(mainthread)
+)
+
+end R2G2P

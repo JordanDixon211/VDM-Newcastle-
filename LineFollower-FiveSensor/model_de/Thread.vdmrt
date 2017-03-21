@@ -1,0 +1,54 @@
+class Thread
+
+instance variables
+
+-- thread period
+private period: nat := 1E9;
+
+-- true if the controller is finished, false otherwise
+private finished: bool := false;
+
+-- sensors and actuators, controller
+private io: [IOFactory] := nil;
+private controller: [AbstractController] := nil;
+
+-- true if completion information written, false otherwise
+private outputWritten: bool := false
+
+operations
+
+-- constructor for Thread
+public Thread: nat * IOFactory * AbstractController ==> Thread
+Thread(f,i,c) == (
+	period := frequency_to_period(f);
+	io := i;
+	controller := c
+);
+
+-- control loop
+Step: () ==> ()
+Step() == (
+    -- print totals near the end, or when energy is depleted
+	duration(0) (
+	    if ((time > 1e9 and R2G2P`io.energySensor.Read() <= 0) or 
+	        time > (World`SIMULATION_TIME * 1e9) - (2 * period)) and not outputWritten
+	    then (
+	    	R2G2P`io.loopCounter.PrintTotals();
+	    	outputWritten := true
+	    )
+	);
+	
+	io.Sync();
+	controller.Step()			
+);
+
+-- run as a periodic thread
+thread periodic(period, 0 ,0, 0)(Step);
+
+functions 
+
+-- convert frequency to period in nanoseconds
+private frequency_to_period: real -> nat
+frequency_to_period(f) == floor 1E9/f
+
+end Thread
